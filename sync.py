@@ -72,7 +72,7 @@ def search_dockerhub_images(query, page_size=100, token=None):
             if not has_more:
                 print(f"结束：{data}")
             # 避免请求过快被限制
-            time.sleep(1)
+            time.sleep(3)
             
             # 打印进度
             if page % 5 == 0:
@@ -90,7 +90,7 @@ def search_dockerhub_images(query, page_size=100, token=None):
 
 def main():
     parser = argparse.ArgumentParser(description='搜索Docker Hub镜像并保存结果')
-    parser.add_argument('--query', default='*', help='搜索关键词，空字符串表示搜索所有镜像')
+    parser.add_argument('--query', default='nigx', help='搜索关键词，空字符串表示搜索所有镜像')
     parser.add_argument('--output', default='result.json', help='输出文件路径')
     parser.add_argument('--page-size', type=int, default=100, help='每页结果数')
     parser.add_argument('--username', help='Docker Hub用户名')
