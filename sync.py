@@ -63,18 +63,14 @@ def search_dockerhub_images(query, page_size=100, token=None):
             # 添加当前页的结果
             page_results = data.get('results', [])
             results.extend(page_results)
-            
+            print(f"第{page}/{page_size}页返回 {data.get('count', 0)} 个结果")
+            print(f"已找到 {len(results)} 个镜像")
             # 检查是否有更多结果
             has_more = data.get('next') is not None and len(page_results) > 0
             page += 1
             if not has_more:
                 print(f"结束：{data}")
-            # 避免请求过快被限制
-            time.sleep(3)
-            
-            # 打印进度
-            if page % 5 == 0:
-                print(f"已搜索 {page-1} 页，找到 {len(results)} 个镜像")
+            time.sleep(1)# 避免请求过快被限制
                 
         except Exception as e:
             print(f"搜索过程中出错: {e}")
