@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>容器镜像列表</title>
+    <!-- 引入 layui.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/css/layui.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .layui-card {
+            margin-bottom: 20px;
+        }
+
+        .layui-card-header {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .layui-table {
+            margin-top: 0;
+        }
+
+        .layui-btn-container {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-card">
+        <div class="layui-card-header">容器镜像列表</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="searchInput" placeholder="请输入关键词搜索名称或描述" class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal" id="searchBtn">搜索</button>
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn" id="refreshBtn">刷新数据</button>
+                </div>
+            </div>
+            <table id="imageTable" lay-filter="imageTable"></table>
+        </div>
+    </div>
+
+    <!-- 引入 layui.js -->
+    <script src="https://cdn.jsdelivr.net/npm/layui@2.8.18/dist/layui.js"></script>
+    <script>
+        layui.use(['table', 'layer', 'util'], function () {
+            var table = layui.table;
+            var layer = layui.layer;
+            var util = layui.util;
+            var originalData = [];
+            function loadOriginalData(callback) {
+                fetch('result.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        originalData = data;
+                        if (callback) callback();
+                    })
+                    .catch(error => {
+                        console.error('加载数据失败:', error);
+                        layer.msg('加载数据失败', { icon: 5 });
+                    });
+            }
+            var tableIns = table.render({
+                elem: '#imageTable',
+                data: [], // 初始为空，后续通过JavaScript加载
+                page: true, // 开启分页
+                limit: 20, // 每页显示的条数
+                limits: [10, 20, 50, 100], // 每页条数的选择项
+                cols: [[
+                    { field: 'repo_name', title: '名称', width: 200, sort: true },
+                    { field: 'short_description', title: '描述', minWidth: 300 },
+                    { field: 'star_count', title: '星标', width: 100, sort: true },
+                    { field: 'pull_count', title: '拉取统计', width: 120, sort: true },
+                    {
+                        field: 'is_official', title: '是否官方', width: 100, templet: function (d) {
+                            return d.is_official ? '是' : '否';
+                        }
+                    },
+                    {
+                        field: 'is_automated', title: '是否自动', width: 100, templet: function (d) {
+                            return d.is_automated ? '是' : '否';
+                        }
+                    },
+                    { field: 'repo_owner', title: '所有者', width: 150 },
+                ]],
+                done: function (res, curr, count) {
+                    console.log('数据加载完成，共 ' + count + ' 条记录');
+                }
+            });
+            loadOriginalData(function () {
+                tableIns.reload({ data: originalData });
+            });
+            document.getElementById('refreshBtn').onclick = function () {
+                loadOriginalData(function () {
+                    tableIns.reload({ data: originalData });
+                    layer.msg('数据已刷新', { icon: 1 });
+                });
+            };
+            document.getElementById('searchBtn').onclick = function () {
+                var keyword = document.getElementById('searchInput').value.trim();
+                if (!keyword) {
+                    tableIns.reload({ data: originalData });
+                    layer.msg('请输入搜索关键词', { icon: 6 });
+                    return;
+                }
+                var filteredData = originalData.filter(function (item) {
+                    var nameMatch = item.repo_name && item.repo_name.toLowerCase().includes(keyword.toLowerCase());
+                    var descMatch = item.short_description && item.short_description.toLowerCase().includes(keyword.toLowerCase());
+                    return nameMatch || descMatch;
+                });
+                tableIns.reload({ data: filteredData });
+                layer.msg('搜索完成，找到 ' + filteredData.length + ' 条匹配记录', { icon: 1 });
+            };
+            document.getElementById('searchInput').onkeypress = function (e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchBtn').click();
+                }
+            };
+        });
+    </script>
+</body>
+
+</html>
