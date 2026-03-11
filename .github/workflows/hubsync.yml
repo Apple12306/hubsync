@@ -25,7 +25,11 @@ jobs:
       - name: Run Docker Hub search script
         run: |
           cd hub
-          python sync.py "" --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
+          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            python hubsearch.py "" --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
+          else
+            python hubsearch.py ""
+          fi
 
       - name: Check for changes
         run: |
