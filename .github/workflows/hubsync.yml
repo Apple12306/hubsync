@@ -9,8 +9,6 @@ on:
     paths:
       - "query.conf"                # 仅当 src 目录下的文件变动时触发
       - "!result.json"          # 排除 result.json 文件
-  # schedule:
-  #   - cron: '0 0 * * *'  # 每天执行一次
   workflow_dispatch:  # 手动触发
 
 jobs:
@@ -56,13 +54,6 @@ jobs:
       - name: Check for changes
         run: |
           git status
-          if git diff --exit-code; then
-            echo "changed=false"
-            echo "没有文件发生改变，结束工作流"
-          else
-            echo "changed=true"
-            echo "有文件发生改变，继续工作流"
-          fi
 
       - name: Commit and push changes
         run: |
