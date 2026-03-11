@@ -59,7 +59,8 @@
             var util = layui.util;
             var originalData = [];
             function loadOriginalData(callback) {
-                fetch('result.json')
+                const timestamp = new Date().getTime();
+                fetch(`result.json?timestamp=${timestamp}`)
                     .then(response => response.json())
                     .then(data => {
                         originalData = data;
@@ -101,6 +102,7 @@
                 tableIns.reload({ data: originalData });
             });
             document.getElementById('refreshBtn').onclick = function () {
+                originalData = [];
                 loadOriginalData(function () {
                     tableIns.reload({ data: originalData });
                     layer.msg('数据已刷新', { icon: 1 });
