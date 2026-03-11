@@ -24,7 +24,7 @@ jobs:
 
       - name: Run Docker Hub search script
         run: |
-          cd hub
+          cd hubsync
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
             python hubsearch.py "" --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
           else
@@ -39,6 +39,6 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add hub/result.json
+          git add ./result.json
           git commit -m 'Update Docker Hub search results'
           git push
