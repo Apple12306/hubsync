@@ -47,10 +47,8 @@ def search_dockerhub_images(query, page_size=100, token=None):
     
     while has_more:
         # 构建搜索URLhttps://registry.hub.docker.com/v2/search/repositories/?page={page}&page_size={page_size}"
-        url = f"https://registry.hub.docker.com/v2/search/repositories/?page={page}&page_size={page_size}"
+        url = f"https://hub.docker.com/v2/search/repositories/?&query={query}&page={page}&page_size={page_size}"
         try:
-            if query:
-                url += f"&query={query}"
             response = requests.get(url, headers=headers)
             
             # 特殊处理404错误，认为是没有更多结果
