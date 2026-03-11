@@ -29,19 +29,19 @@ jobs:
         run: |
           ls
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
-            python sync.py --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }} >> $GITHUB_OUTPUT
+            python sync.py --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
           else
-            python sync.py --query "openclaw" >> $GITHUB_OUTPUT
+            python sync.py --query "openclaw"
           fi
 
       - name: Check for changes
         run: |
           git status
           if git diff --exit-code; then
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "changed=false"
             echo "没有文件发生改变，结束工作流"
           else
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "changed=true"
             echo "有文件发生改变，继续工作流"
           fi
 
