@@ -90,9 +90,9 @@ def search_dockerhub_images(query, page_size=100, token=None):
 
 def main():
     parser = argparse.ArgumentParser(description='搜索Docker Hub镜像并保存结果')
-    parser.add_argument('--query', default='nigx', help='搜索关键词，空字符串表示搜索所有镜像')
+    parser.add_argument('--query', default='a', help='搜索关键词，空字符串表示搜索所有镜像')
     parser.add_argument('--output', default='result.json', help='输出文件路径')
-    parser.add_argument('--page-size', type=int, default=100, help='每页结果数')
+    parser.add_argument('--page-size', type=int, default=1000, help='每页结果数')
     parser.add_argument('--username', help='Docker Hub用户名')
     parser.add_argument('--password', help='Docker Hub密码或访问令牌')
     
