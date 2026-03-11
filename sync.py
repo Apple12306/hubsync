@@ -69,7 +69,8 @@ def search_dockerhub_images(query, page_size=100, token=None):
             # 检查是否有更多结果
             has_more = data.get('next') is not None and len(page_results) > 0
             page += 1
-            
+            if not has_more:
+                print(f"结束：{data}")
             # 避免请求过快被限制
             time.sleep(1)
             
