@@ -49,6 +49,7 @@ jobs:
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
             python sync.py --query "${{ steps.read_query.outputs.query }}" --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
           else
+            echo "python sync.py --query ${{ steps.read_query.outputs.query }}"
             python sync.py --query "${{ steps.read_query.outputs.query }}"
           fi
 
