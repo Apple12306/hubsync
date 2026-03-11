@@ -26,9 +26,9 @@ jobs:
         run: |
           ls
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
-            python sync.py "/" --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
+            python sync.py --query "/" --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
           else
-            python sync.py "/"
+            python sync.py --query "/"
           fi
 
       - name: Check for changes
