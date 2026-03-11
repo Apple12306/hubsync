@@ -29,20 +29,30 @@ jobs:
         run: |
           ls
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
-            python sync.py --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }}
+            python sync.py --username ${{ secrets.DOCKERHUB_USERNAME }} --password ${{ secrets.DOCKERHUB_TOKEN }} >> $GITHUB_OUTPUT
           else
-            python sync.py
+            python sync.py >> $GITHUB_OUTPUT
           fi
 
       - name: Check for changes
         run: |
-          ls
           git status
+          if git diff --exit-code; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "没有文件发生改变，结束工作流"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "有文件发生改变，继续工作流"
+          fi
 
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add ./result.json
-          git commit -m 'Update Docker Hub search results'
-          git push
+          if [ -f "result.json" ]; then
+            git add result.json
+            git commit -m 'Update Docker Hub search results' || echo "No changes to commit"
+            git push || echo "Push failed, but workflow completed"
+          else
+            echo "result.json not found, skipping commit"
+          fi
